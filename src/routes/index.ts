@@ -5,4 +5,8 @@ const router = Router();
 
 router.use("/user", userRouter);
 
+router.use("*", (req, res, next) => {
+  next(new Error("Страница не найдена"));
+});
+
 export default router;
