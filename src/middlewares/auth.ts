@@ -1,19 +1,19 @@
 import * as jwt from "jsonwebtoken";
 
-const verify = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return next(new Error("Требуется авторизация"));
+    return res.status(401).json({ error: "Authorization is required" });
   }
 
   const token = authorization.replace("Bearer ", "");
   let payload: string | jwt.JwtPayload;
 
   try {
-    payload = jwt.verify(token, process.env.SECRET_KEY);
-  } catch (err) {
-    next(new Error("Требуется авторизация"));
+    payload = jwt.verify(token, "random_secret_key");
+  } catch (error) {
+    return res.status(401).json({ error: "Authorization is required" });
   }
 
   req.user = payload;
@@ -21,4 +21,4 @@ const verify = (req, res, next) => {
   return next();
 };
 
-export default verify;
+export default authMiddleware;
