@@ -3,10 +3,14 @@ import { User } from "../entity/User";
 import * as jwt from "jsonwebtoken";
 import { AppDataSource } from "../data-source";
 import * as crypto from "crypto";
+
 import userRepository from "../db";
 
-const generateJwt = (id: number) => {
-  return jwt.sign({ id }, "random_secret_key", { expiresIn: "5d" });
+const generateAccessToken = (id: number) => {
+  return jwt.sign({ id }, "random_secret_key", { expiresIn: "5s" });
+};
+const generateRefreshToken = (id: number) => {
+  return jwt.sign({ id }, "refresh_secret_key", { expiresIn: "5d" });
 };
 
 const hashPassword = (password: string) => {
@@ -36,6 +40,8 @@ async function registerUser(req: Request, res: Response) {
 
     await userRepository.save(user);
 
+    delete user.password;
+
     return res.status(201).send(user);
   } catch (error) {
     console.error("Error during registration:", error);
@@ -45,22 +51,53 @@ async function registerUser(req: Request, res: Response) {
   }
 }
 
+// async function loginUser(req: Request, res: Response) {
+//   try {
+//     const { email, password } = req.body;
+//     const hashedPassword = hashPassword(password);
+//     const user = await userRepository.findOne({
+//       where: { email: email, password: hashedPassword },
+//     });
+//     if (!user) {
+//       return res.status(401).json({ error: "Invalid email or password" });
+//     }
+//     let accessToken = (<any>user).accessToken;
+//     let refreshToken = (<any>user).refreshToken;
+//     if (!accessToken || jwt.verify(accessToken, "access_secret_key")) {
+//       accessToken = generateAccessToken(user.id);
+//       refreshToken = generateRefreshToken(user.id);
+
+//       (<any>user).accessToken = accessToken;
+//       (<any>user).refreshToken = refreshToken;
+//       await userRepository.save(user);
+//     }
+//     return res.status(200).send({ accessToken, refreshToken });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     return res.status(500).json({ error: "An error occurred during login" });
+//   }
+// }
+
 async function loginUser(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
-
     const hashedPassword = hashPassword(password);
-
     const user = await userRepository.findOne({
       where: { email: email, password: hashedPassword },
     });
-
     if (!user) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
-
-    const token = generateJwt(user.id);
-    return res.status(200).send({ token });
+    let accessToken = (<any>user).accessToken;
+    let refreshToken = (<any>user).refreshToken;
+    if (!accessToken || jwt.verify(accessToken, "random_secret_key")) {
+      accessToken = generateAccessToken(user.id);
+      refreshToken = generateRefreshToken(user.id);
+      (<any>user).accessToken = accessToken;
+      (<any>user).refreshToken = refreshToken;
+      await userRepository.save(user);
+    }
+    return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {
     console.error("Error during login:", error);
     return res.status(500).json({ error: "An error occurred during login" });

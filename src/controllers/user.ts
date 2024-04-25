@@ -45,11 +45,11 @@ async function updateUserData(req: Request, res: Response) {
 
 async function deleteUser(req: Request, res: Response) {
   try {
-    const user = await userRepository.findOne({
-      where: { id: Number(req.params.id) },
-    });
+    // const user = await userRepository.findOne({
+    //   where: { id: Number(req.params.id) },
+    // });
 
-    await userRepository.remove(user); //нужно использовать softDelete
+    await userRepository.softDelete(req.params.id); //нужно использовать softDelete
 
     res.send(`User id ${req.params.id} has been deleted.`);
   } catch (error) {
