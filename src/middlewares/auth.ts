@@ -9,7 +9,6 @@ const authMiddleware = (req, res, next) => {
     }
 
     const token = authorization.replace("Bearer ", "");
-    // let payload: string | jwt.JwtPayload;
 
     const payload = jwt.verify(token, "random_secret_key");
 
@@ -17,12 +16,11 @@ const authMiddleware = (req, res, next) => {
 
     return next();
   } catch (error) {
-    console.log("ERRROROROROROR >>>", error);
     if (error.name === "TokenExpiredError") {
       return res.status(401).json({ error: "Token died" });
-    } else {
-      return res.status(401).json({ error: "Unauthorized" });
     }
+
+    return res.status(401).json({ error: "Unauthorized" });
   }
 };
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import userRepository from "../db";
+import { hashPassword } from "./auth";
 
 async function getUserData(req: Request, res: Response) {
   try {
@@ -22,12 +23,13 @@ async function getUserData(req: Request, res: Response) {
 
 async function updateUserData(req: Request, res: Response) {
   try {
-    const { fullName, email, dob } = req.body;
+    const { fullName, email, dob, password } = req.body;
 
     await userRepository.update(Number(req.params.id), {
       fullName,
       email,
       dob,
+      password: hashPassword(password),
     });
 
     const updatedUser = await userRepository.findOne({
@@ -45,11 +47,7 @@ async function updateUserData(req: Request, res: Response) {
 
 async function deleteUser(req: Request, res: Response) {
   try {
-    // const user = await userRepository.findOne({
-    //   where: { id: Number(req.params.id) },
-    // });
-
-    await userRepository.softDelete(req.params.id); //нужно использовать softDelete
+    await userRepository.softDelete(req.params.id);
 
     res.send(`User id ${req.params.id} has been deleted.`);
   } catch (error) {

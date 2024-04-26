@@ -7,7 +7,7 @@ import * as crypto from "crypto";
 import userRepository from "../db";
 
 const generateAccessToken = (id: number) => {
-  return jwt.sign({ id }, "random_secret_key", { expiresIn: "5s" });
+  return jwt.sign({ id }, "random_secret_key", { expiresIn: "2m" });
 };
 const generateRefreshToken = (id: number) => {
   return jwt.sign({ id }, "refresh_secret_key", { expiresIn: "5d" });
@@ -41,6 +41,7 @@ async function registerUser(req: Request, res: Response) {
     await userRepository.save(user);
 
     delete user.password;
+    delete user.deletedAt;
 
     return res.status(201).send(user);
   } catch (error) {
@@ -50,33 +51,6 @@ async function registerUser(req: Request, res: Response) {
       .json({ error: "An error occurred during registration" });
   }
 }
-
-// async function loginUser(req: Request, res: Response) {
-//   try {
-//     const { email, password } = req.body;
-//     const hashedPassword = hashPassword(password);
-//     const user = await userRepository.findOne({
-//       where: { email: email, password: hashedPassword },
-//     });
-//     if (!user) {
-//       return res.status(401).json({ error: "Invalid email or password" });
-//     }
-//     let accessToken = (<any>user).accessToken;
-//     let refreshToken = (<any>user).refreshToken;
-//     if (!accessToken || jwt.verify(accessToken, "access_secret_key")) {
-//       accessToken = generateAccessToken(user.id);
-//       refreshToken = generateRefreshToken(user.id);
-
-//       (<any>user).accessToken = accessToken;
-//       (<any>user).refreshToken = refreshToken;
-//       await userRepository.save(user);
-//     }
-//     return res.status(200).send({ accessToken, refreshToken });
-//   } catch (error) {
-//     console.error("Error during login:", error);
-//     return res.status(500).json({ error: "An error occurred during login" });
-//   }
-// }
 
 async function loginUser(req: Request, res: Response) {
   try {
@@ -104,4 +78,4 @@ async function loginUser(req: Request, res: Response) {
   }
 }
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, generateAccessToken, hashPassword };
