@@ -1,29 +1,34 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 import { generateAccessToken } from "./auth";
+import "dotenv/config";
+import AuthError from "../errors/AuthError";
+import BadRequestError from "../errors/BadRequestError";
 
-type JwtPayload = {
+const { REFRESH_KEY } = process.env;
+
+type JwtPayloadType = {
   id: string;
 };
 
-function refreshToken(req: Request, res: Response) {
-  const refreshToken = req.body.refreshToken;
-
-  if (!refreshToken) {
-    return res.status(400).json({ error: "Refresh token is required" });
-  }
-
+function refreshToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const decoded = verify(refreshToken, "refresh_secret_key") as JwtPayload;
+    const refreshToken: string = req.body.refreshToken;
 
-    if (decoded) {
-      const userId = decoded.id;
-      const accessToken = generateAccessToken(Number(userId));
-
-      return res.status(200).json({ accessToken });
-    } else {
-      return res.status(401).json({ error: "Invalid refresh token" });
+    if (!refreshToken) {
+      return next(new BadRequestError("Refresh token is required"));
     }
+
+    const decoded = verify(refreshToken, REFRESH_KEY) as JwtPayloadType;
+
+    if (!decoded) {
+      return next(new AuthError("Invalid refresh token"));
+    }
+
+    const userId = decoded.id;
+    const accessToken = generateAccessToken(Number(userId));
+
+    return res.status(200).json({ accessToken });
   } catch (error) {
     return res
       .status(500)

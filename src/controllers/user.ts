@@ -1,15 +1,16 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import userRepository from "../db";
 import { hashPassword } from "./auth";
+import NotFoundError from "../errors/NotFoundError";
 
-async function getUserData(req: Request, res: Response) {
+async function getUserData(req: Request, res: Response, next: NextFunction) {
   try {
     const user = await userRepository.findOne({
       where: { id: Number(req.params.id) },
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return next(new NotFoundError("User not found"));
     }
 
     return res.json(user);

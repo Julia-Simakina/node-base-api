@@ -1,3 +1,5 @@
+import "dotenv/config";
+const { ACCESS_KEY, REFRESH_KEY } = process.env;
 import { Request, Response, NextFunction } from "express";
 import { User } from "../entity/User";
 import * as jwt from "jsonwebtoken";
@@ -5,19 +7,21 @@ import { AppDataSource } from "../data-source";
 import * as crypto from "crypto";
 
 import userRepository from "../db";
+import ConflictError from "../errors/ConflictError";
+import AuthError from "../errors/AuthError";
 
 const generateAccessToken = (id: number) => {
-  return jwt.sign({ id }, "random_secret_key", { expiresIn: "2m" });
+  return jwt.sign({ id }, ACCESS_KEY, { expiresIn: "10s" });
 };
 const generateRefreshToken = (id: number) => {
-  return jwt.sign({ id }, "refresh_secret_key", { expiresIn: "5d" });
+  return jwt.sign({ id }, REFRESH_KEY, { expiresIn: "5d" });
 };
 
 const hashPassword = (password: string) => {
   return crypto.createHash("sha256").update(password).digest("hex");
 };
 
-async function registerUser(req: Request, res: Response) {
+async function registerUser(req: Request, res: Response, next: NextFunction) {
   try {
     const { fullName, email, password, dob }: User = req.body;
 
@@ -25,9 +29,7 @@ async function registerUser(req: Request, res: Response) {
       where: { email: email },
     });
     if (existingUser) {
-      return res
-        .status(409)
-        .json({ error: "A user with this email already exists" });
+      return next(new ConflictError("A user with this email already exists"));
     }
 
     const hashedPassword = hashPassword(password);
@@ -45,36 +47,28 @@ async function registerUser(req: Request, res: Response) {
 
     return res.status(201).send(user);
   } catch (error) {
-    console.error("Error during registration:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred during registration" });
+    return next(error);
   }
 }
 
-async function loginUser(req: Request, res: Response) {
+async function loginUser(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
     const hashedPassword = hashPassword(password);
     const user = await userRepository.findOne({
       where: { email: email, password: hashedPassword },
     });
+
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return next(new AuthError("Invalid email or password"));
     }
-    let accessToken = (<any>user).accessToken;
-    let refreshToken = (<any>user).refreshToken;
-    if (!accessToken || jwt.verify(accessToken, "random_secret_key")) {
-      accessToken = generateAccessToken(user.id);
-      refreshToken = generateRefreshToken(user.id);
-      (<any>user).accessToken = accessToken;
-      (<any>user).refreshToken = refreshToken;
-      await userRepository.save(user);
-    }
+
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
     return res.status(200).send({ accessToken, refreshToken });
   } catch (error) {
-    console.error("Error during login:", error);
-    return res.status(500).json({ error: "An error occurred during login" });
+    return next(error);
   }
 }
 
