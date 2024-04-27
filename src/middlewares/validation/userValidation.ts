@@ -4,10 +4,8 @@ import { validateData } from ".";
 const updateUserDataSchema = yup.object().shape({
   fullName: yup.string(),
   email: yup.string().email(),
-  dob: yup
-    .date()
-    .min(new Date(1900, 0, 1))
-    .max(new Date().toISOString().split("T")[0]),
+  password: yup.string().min(5),
+  dob: yup.date().min(new Date(1900, 0, 1)).max(new Date()),
 });
 
 const updateUserDataValidation = validateData(updateUserDataSchema);

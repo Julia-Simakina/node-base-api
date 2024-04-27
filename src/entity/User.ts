@@ -9,27 +9,31 @@ import {
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: "integer" })
   id: number;
 
-  @Column()
+  @Column({ type: "character varying" })
   fullName: string;
 
-  @Column()
+  @Column({ type: "character varying" })
   email: string;
 
-  @Column({ select: false })
+  @Column({ type: "character varying", select: false })
   password: string;
 
-  @Column()
+  @Column({ type: "timestamp without time zone" })
   dob: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({
+    type: "timestamp without time zone",
+    nullable: true,
+    default: null,
+  })
   deletedAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp without time zone" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt: Date;
 }

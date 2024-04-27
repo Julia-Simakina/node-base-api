@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
-import BadRequestError from "../../errors/BadRequestError";
+import { ApiError } from "../../errors/ApiError";
 
 const validateData = (schema: yup.Schema<any>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +12,7 @@ const validateData = (schema: yup.Schema<any>) => {
         field: err.path,
         message: err.message,
       }));
-      return next(new BadRequestError(errors));
+      return next(ApiError.BadRequestError(JSON.stringify(errors)));
     }
   };
 };

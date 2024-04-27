@@ -5,11 +5,7 @@ const userRegisterSchema = yup.object().shape({
   fullName: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(5).required(),
-  dob: yup
-    .date()
-    .min(new Date(1900, 0, 1))
-    .max(new Date().toISOString().split("T")[0])
-    .required(),
+  dob: yup.date().min(new Date(1900, 0, 1)).max(new Date()).required(),
 });
 
 const userLoginSchema = yup.object().shape({

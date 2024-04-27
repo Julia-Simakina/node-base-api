@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { registerUser, loginUser } from "../controllers/auth";
+import { loginUser } from "../controllers/auth/loginUser";
+import { registerUser } from "../controllers/auth/registerUser";
 import { refreshToken } from "../controllers/refreshToken";
 import {
   validateRegister,

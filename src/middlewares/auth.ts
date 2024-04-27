@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 import "dotenv/config";
-import AuthError from "../errors/AuthError";
+import { ApiError } from "../errors/ApiError";
 
 const { ACCESS_KEY } = process.env;
 
@@ -10,7 +10,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers;
 
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      return next(new AuthError("Invalid email or password"));
+      return next(ApiError.AuthError("Invalid email or password"));
     }
 
     const token = authorization.replace("Bearer ", "");
@@ -20,10 +20,10 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     return next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return next(new AuthError("Token died"));
+      return next(ApiError.AuthError("Token died"));
     }
 
-    return next(new AuthError("Unauthorized"));
+    return next(ApiError.AuthError("Unauthorized"));
   }
 };
 
