@@ -10,11 +10,12 @@ import { ApiError } from "../../errors/ApiError";
 
 async function registerUser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { fullName, email, password, dob }: User = req.body;
+    const { fullName: fullName, email, password, dayOfBirth }: User = req.body;
 
-    const existingUser: User = await AppDataSource.manager.findOne(User, {
+    const existingUser = await AppDataSource.manager.findOne(User, {
       where: { email: email },
     });
+
     if (existingUser) {
       return next(
         ApiError.ConflictError("A user with this email already exists")
@@ -27,14 +28,11 @@ async function registerUser(req: Request, res: Response, next: NextFunction) {
     user.fullName = fullName;
     user.email = email;
     user.password = hashedPassword;
-    user.dob = dob;
+    user.dayOfBirth = dayOfBirth;
 
-    await userRepository.save(user);
+    const newUser = await userRepository.save(user);
 
-    delete user.password;
-    delete user.deletedAt;
-
-    return res.status(201).send(user);
+    return res.status(201).send(newUser);
   } catch (error) {
     return next(error);
   }

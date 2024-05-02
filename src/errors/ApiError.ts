@@ -1,11 +1,18 @@
-export class ApiError extends Error {
+interface OurErr extends Error {}
+
+export class ApiError implements OurErr {
   status: number;
   errors: any[];
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
+  name: string;
+  message: string;
 
-    Object.setPrototypeOf(this, ApiError.prototype);
+  constructor(status: number, message: string) {
+    // super(message);
+    this.message = message;
+    this.status = status;
+    this.name = "custom name";
+
+    // Object.setPrototypeOf(this, ApiError.prototype);
   }
   static AuthError(message: string): ApiError {
     return new ApiError(401, message);

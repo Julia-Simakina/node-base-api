@@ -4,12 +4,12 @@ import { hashPassword } from "../../utils/hashPassword";
 
 async function updateUserData(req: Request, res: Response) {
   try {
-    const { fullName, email, dob, password } = req.body;
+    const { fullName, email, dayOfBirth, password } = req.body;
 
     await userRepository.update(Number(req.params.id), {
-      fullName,
+      fullName: fullName,
       email,
-      dob,
+      dayOfBirth,
       password: hashPassword(password),
     });
 

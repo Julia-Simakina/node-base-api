@@ -5,7 +5,7 @@ const updateUserDataSchema = yup.object().shape({
   fullName: yup.string(),
   email: yup.string().email(),
   password: yup.string().min(5),
-  dob: yup.date().min(new Date(1900, 0, 1)).max(new Date()),
+  dayOfBirth: yup.date().min(new Date(1900, 0, 1)).max(new Date()),
 });
 
 const updateUserDataValidation = validateData(updateUserDataSchema);

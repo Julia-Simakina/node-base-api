@@ -23,6 +23,9 @@
   },
   "scripts": {
     "start": "nodemon --exec ts-node src/index.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "db:migrate:generate": "npx ts-node ./node_modules/.bin/typeorm migration:generate -d ./src/data-source.ts ./src/migrations/migrationName",
+    "db:migrate:up": "npx typeorm-ts-node-commonjs migration:run -d /home/fusion/simakina/node-base-api/src/data-source.ts",
+    "db:migrate:down": "npx typeorm-ts-node-commonjs migration:revert -d /home/fusion/simakina/node-base-api/src/data-source.ts"
   }
 }

@@ -15,6 +15,12 @@ export class User {
   @Column({ type: "character varying" })
   fullName: string;
 
+  // @Column({ type: "character varying" })
+  // firstName: string;
+
+  // @Column({ type: "character varying" })
+  // lastName: string;
+
   @Column({ type: "character varying" })
   email: string;
 
@@ -22,7 +28,7 @@ export class User {
   password: string;
 
   @Column({ type: "timestamp without time zone" })
-  dob: Date;
+  dayOfBirth: Date;
 
   @DeleteDateColumn({
     type: "timestamp without time zone",
