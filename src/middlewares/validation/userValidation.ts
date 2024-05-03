@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { validateData } from ".";
+import validateData from ".";
 
 const updateUserDataSchema = yup.object().shape({
   fullName: yup.string(),
@@ -10,4 +10,4 @@ const updateUserDataSchema = yup.object().shape({
 
 const updateUserDataValidation = validateData(updateUserDataSchema);
 
-export { updateUserDataValidation };
+export default updateUserDataValidation;

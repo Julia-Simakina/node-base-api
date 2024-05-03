@@ -1,44 +1,43 @@
 import "dotenv/config";
 import { Request, Response, NextFunction } from "express";
-import userRepository from "../../db";
-import { ApiError } from "../../errors/ApiError";
-import { hashPassword } from "../../utils/hashPassword";
+import userRepository from "../../db/userRepository";
+import CustomError from "../../errors/CustomError";
+import hashPassword from "../../utils/hashPassword";
 import {
   generateAccessToken,
   generateRefreshToken,
+  generateTokenPair,
 } from "../../utils/generateToken";
 
-async function loginUser(req: Request, res: Response, next: NextFunction) {
+export default async function loginUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { email, password } = req.body;
-    const hashedPassword = hashPassword(password);
+
     const user = await userRepository.findOne({
       where: { email },
+      select: ["password"],
     });
 
     if (!user) {
-      return next(ApiError.AuthError("Invalid email"));
+      return next(
+        CustomError.AuthError("The user with this email was not found")
+      );
     }
 
-    // if (user.password !== hashedPassword) {                         //в user нет поля password (selected: false)
-    //   return next(new AuthError("Invalid password"));
-    // }
+    const hashedPassword = hashPassword(password);
 
-    const userWithValidPassword = await userRepository.findOne({
-      where: { password: hashedPassword },
-    });
-
-    if (!userWithValidPassword) {
-      return next(ApiError.AuthError("Invalid password"));
+    if (user.password !== hashedPassword) {
+      return next(CustomError.AuthError("Invalid password"));
     }
 
-    const accessToken = generateAccessToken(userWithValidPassword.id);
-    const refreshToken = generateRefreshToken(userWithValidPassword.id);
+    const tokens = generateTokenPair(user.id);
 
-    return res.status(200).send({ accessToken, refreshToken });
+    return res.status(200).send(tokens);
   } catch (error) {
-    return next(error);
+    return console.error(error);
   }
 }
-
-export { loginUser, generateAccessToken };

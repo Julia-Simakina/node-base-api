@@ -1,24 +1,24 @@
 import "dotenv/config";
 import { Request, Response, NextFunction } from "express";
-import { User } from "../../entity/User";
-import { AppDataSource } from "../../data-source";
+import User from "../../db/entity/User";
+import userRepository from "../../db/userRepository";
+import hashPassword from "../../utils/hashPassword";
+import CustomError from "../../errors/CustomError";
 
-import userRepository from "../../db";
-// import ConflictError from "../../errors/ConflictError";
-import { hashPassword } from "../../utils/hashPassword";
-import { ApiError } from "../../errors/ApiError";
-
-async function registerUser(req: Request, res: Response, next: NextFunction) {
+export default async function registerUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { fullName: fullName, email, password, dayOfBirth }: User = req.body;
-
-    const existingUser = await AppDataSource.manager.findOne(User, {
-      where: { email: email },
+    const { fullName, email, password, dayOfBirth }: User = req.body;
+    const existingUser = await userRepository.findOne({
+      where: { email },
     });
 
     if (existingUser) {
       return next(
-        ApiError.ConflictError("A user with this email already exists")
+        CustomError.ConflictError("A user with this email already exists")
       );
     }
 
@@ -31,11 +31,10 @@ async function registerUser(req: Request, res: Response, next: NextFunction) {
     user.dayOfBirth = dayOfBirth;
 
     const newUser = await userRepository.save(user);
+    delete newUser.password;
 
     return res.status(201).send(newUser);
   } catch (error) {
-    return next(error);
+    return console.error(error);
   }
 }
-
-export { registerUser };

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
-import { ApiError } from "../../errors/ApiError";
+import CustomError from "../../errors/CustomError";
 
-const validateData = (schema: yup.Schema<any>) => {
+const validateData = (schema: yup.Schema<unknown>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.validate(req.body, { abortEarly: false });
@@ -12,9 +12,9 @@ const validateData = (schema: yup.Schema<any>) => {
         field: err.path,
         message: err.message,
       }));
-      return next(ApiError.BadRequestError(JSON.stringify(errors)));
+      return next(CustomError.BadRequestError(JSON.stringify(errors)));
     }
   };
 };
 
-export { validateData };
+export default validateData;

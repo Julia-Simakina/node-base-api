@@ -8,23 +8,17 @@ import {
 } from "typeorm";
 
 @Entity()
-export class User {
+export default class User {
   @PrimaryGeneratedColumn({ type: "integer" })
   id: number;
 
-  @Column({ type: "character varying" })
+  @Column({ type: "varchar" })
   fullName: string;
 
-  // @Column({ type: "character varying" })
-  // firstName: string;
-
-  // @Column({ type: "character varying" })
-  // lastName: string;
-
-  @Column({ type: "character varying" })
+  @Column({ type: "varchar" })
   email: string;
 
-  @Column({ type: "character varying", select: false })
+  @Column({ type: "varchar", select: false })
   password: string;
 
   @Column({ type: "timestamp without time zone" })

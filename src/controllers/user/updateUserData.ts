@@ -1,29 +1,42 @@
 import { Request, Response, NextFunction } from "express";
-import userRepository from "../../db";
-import { hashPassword } from "../../utils/hashPassword";
+import userRepository from "../../db/userRepository";
+import hashPassword from "../../utils/hashPassword";
+import CustomError from "../../errors/CustomError";
+import User from "../../db/entity/User";
+import { DeepPartial } from "typeorm";
 
-async function updateUserData(req: Request, res: Response) {
+type BodyType = {
+  fullName?: string | undefined;
+  email?: string | undefined;
+  dayOfBirth?: Date | undefined;
+  password?: string | undefined;
+};
+
+export default async function updateUserData(
+  req: Request<any, any, BodyType>,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { fullName, email, dayOfBirth, password } = req.body;
-
-    await userRepository.update(Number(req.params.id), {
-      fullName: fullName,
-      email,
-      dayOfBirth,
-      password: hashPassword(password),
-    });
-
     const updatedUser = await userRepository.findOne({
       where: { id: Number(req.params.id) },
     });
 
+    if (!updatedUser) {
+      return next(CustomError.NotFoundError("User not found"));
+    }
+
+    // const { fullName, email, dayOfBirth, password } = req.body;
+
+    await userRepository.update(Number(req.params.id), {
+      // fullName,
+      // email,
+      // dayOfBirth,
+      password: hashPassword(req.body.password),
+    });
+
     res.send(updatedUser);
   } catch (error) {
-    console.error("Error while fetching user:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while fetching user" });
+    console.error(error);
   }
 }
-
-export { updateUserData };

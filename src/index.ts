@@ -1,8 +1,8 @@
 import * as express from "express";
-import { AppDataSource } from "./data-source";
+import AppDataSource from "./db/data-source";
 import router from "./routes";
 import "dotenv/config";
-import { errorHandler } from "./middlewares/errorHandler";
+import errorHandler from "./middlewares/errorHandler";
 
 const { PORT = 3000 } = process.env;
 
@@ -18,4 +18,12 @@ app.use(errorHandler);
 
 app.listen(PORT, function () {
   console.log("Сервер ожидает подключения...");
+});
+
+process.on("uncaughtException", (err) => {
+  console.log("uncaughtException: ", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log("unhandledRejection: ", err);
 });

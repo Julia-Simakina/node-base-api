@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { validateData } from ".";
+import validateData from ".";
 
 const userRegisterSchema = yup.object().shape({
   fullName: yup.string().required(),
@@ -13,7 +13,12 @@ const userLoginSchema = yup.object().shape({
   password: yup.string().min(5).required(),
 });
 
+const refreshTokenSchema = yup.object().shape({
+  refreshToken: yup.string().required(),
+});
+
 const validateRegister = validateData(userRegisterSchema);
 const validateLogin = validateData(userLoginSchema);
+const validateRefreshToken = validateData(refreshTokenSchema);
 
-export { validateRegister, validateLogin };
+export { validateRegister, validateLogin, validateRefreshToken };
