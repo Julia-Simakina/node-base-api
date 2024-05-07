@@ -2,10 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 import "dotenv/config";
 import CustomError from "../errors/CustomError";
+import User from "../db/entity/User";
+import userRepository from "../db/userRepository";
+import { JwtPayloadType } from "../types/types";
 
 const { ACCESS_KEY } = process.env;
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { authorization } = req.headers;
 
@@ -14,15 +21,23 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const token = authorization.replace("Bearer ", "");
+    const decodedToken = jwt.verify(token, ACCESS_KEY) as JwtPayloadType;
 
-    jwt.verify(token, ACCESS_KEY);
+    const user: User = await userRepository.findOne({
+      where: { id: Number(decodedToken.id) },
+    });
+
+    if (!user) {
+      return next(CustomError.NotFoundError("User not found"));
+    }
+
+    req.user = user;
 
     return next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
       return next(CustomError.AuthError("Token expired"));
     }
-
     return next(CustomError.AuthError("Unauthorized"));
   }
 };

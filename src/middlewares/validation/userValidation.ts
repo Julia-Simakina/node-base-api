@@ -1,13 +1,32 @@
 import * as yup from "yup";
 import validateData from ".";
 
-const updateUserDataSchema = yup.object().shape({
-  fullName: yup.string(),
-  email: yup.string().email(),
-  password: yup.string().min(5),
-  dayOfBirth: yup.date().min(new Date(1900, 0, 1)).max(new Date()),
-});
+const updateUserSchema = {
+  params: yup.object().shape({
+    id: yup.number().required(),
+  }),
+  body: yup.object().shape({
+    fullName: yup.string().min(2),
+    email: yup.string().email(),
+    password: yup.string().min(5),
+    dayOfBirth: yup.date().min(new Date(1900, 0, 1)).max(new Date()),
+  }),
+};
 
-const updateUserDataValidation = validateData(updateUserDataSchema);
+const getUserSchema = {
+  params: yup.object().shape({
+    id: yup.number().required(),
+  }),
+};
 
-export default updateUserDataValidation;
+const deleteUserSchema = {
+  params: yup.object().shape({
+    id: yup.number().required(),
+  }),
+};
+
+const deleteUserValidation = validateData(deleteUserSchema);
+const updateUserValidation = validateData(updateUserSchema);
+const getUserValidation = validateData(getUserSchema);
+
+export { updateUserValidation, getUserValidation, deleteUserValidation };

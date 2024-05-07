@@ -3,39 +3,45 @@ import userRepository from "../../db/userRepository";
 import hashPassword from "../../utils/hashPassword";
 import CustomError from "../../errors/CustomError";
 import User from "../../db/entity/User";
-import { DeepPartial } from "typeorm";
-
-type BodyType = {
-  fullName?: string | undefined;
-  email?: string | undefined;
-  dayOfBirth?: Date | undefined;
-  password?: string | undefined;
-};
 
 export default async function updateUserData(
-  req: Request<any, any, BodyType>,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const updatedUser = await userRepository.findOne({
-      where: { id: Number(req.params.id) },
-    });
+    const userId = req.user.id;
+    const { id } = req.params;
 
-    if (!updatedUser) {
-      return next(CustomError.NotFoundError("User not found"));
+    if (Number(id) !== userId) {
+      return next(CustomError.ForbiddenError("You can only edit your profile"));
     }
 
-    // const { fullName, email, dayOfBirth, password } = req.body;
+    const newUserData: Partial<User> = { ...req.body };
 
-    await userRepository.update(Number(req.params.id), {
-      // fullName,
-      // email,
-      // dayOfBirth,
-      password: hashPassword(req.body.password),
-    });
+    if (newUserData.email) {
+      const userWithReqEmail = await userRepository.findOne({
+        where: { email: newUserData.email },
+      });
 
-    res.send(updatedUser);
+      if (userWithReqEmail) {
+        return next(
+          CustomError.ConflictError("A user with this email already exists")
+        );
+      }
+    }
+
+    if (newUserData.password) {
+      newUserData.password = hashPassword(newUserData.password);
+    }
+
+    await userRepository.update(userId, newUserData);
+
+    Object.assign(req.user, newUserData);
+
+    delete req.user.password;
+
+    res.send(req.user);
   } catch (error) {
     console.error(error);
   }

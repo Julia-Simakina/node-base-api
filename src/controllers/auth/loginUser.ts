@@ -3,11 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import userRepository from "../../db/userRepository";
 import CustomError from "../../errors/CustomError";
 import hashPassword from "../../utils/hashPassword";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  generateTokenPair,
-} from "../../utils/generateToken";
+import generateTokenPair from "../../utils/generateToken";
 
 export default async function loginUser(
   req: Request,
@@ -19,12 +15,12 @@ export default async function loginUser(
 
     const user = await userRepository.findOne({
       where: { email },
-      select: ["password"],
+      select: ["password", "id", "email"],
     });
 
     if (!user) {
       return next(
-        CustomError.AuthError("The user with this email was not found")
+        CustomError.NotFoundError("The user with this email was not found")
       );
     }
 
@@ -34,9 +30,11 @@ export default async function loginUser(
       return next(CustomError.AuthError("Invalid password"));
     }
 
+    delete user.password;
+
     const tokens = generateTokenPair(user.id);
 
-    return res.status(200).send(tokens);
+    return res.status(200).send({ tokens, user });
   } catch (error) {
     return console.error(error);
   }

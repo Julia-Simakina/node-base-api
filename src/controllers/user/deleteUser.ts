@@ -8,17 +8,22 @@ export default async function deleteUser(
   next: NextFunction
 ) {
   try {
-    const deletedUser = await userRepository.findOne({
-      where: { id: Number(req.params.id), deletedAt: null },
-    });
+    const userId = req.user.id;
+    const { id } = req.params;
 
-    if (!deletedUser) {
+    if (Number(id) !== userId) {
+      return next(
+        CustomError.ForbiddenError("You can only delete your profile")
+      );
+    }
+
+    if (!req.user) {
       return next(CustomError.NotFoundError("User not found"));
     }
 
-    await userRepository.softDelete(req.params.id);
+    await userRepository.softDelete(userId);
 
-    res.send(`User id ${req.params.id} has been deleted.`);
+    res.send(`User id ${userId} has been deleted.`);
   } catch (error) {
     console.error(error);
   }

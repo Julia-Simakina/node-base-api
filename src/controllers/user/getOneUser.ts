@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import userRepository from "../../db/userRepository";
 import CustomError from "../../errors/CustomError";
 
-export default async function getUserData(
+export default async function getOneUser(
   req: Request,
   res: Response,
   next: NextFunction

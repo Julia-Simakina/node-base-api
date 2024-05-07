@@ -3,10 +3,19 @@ import AppDataSource from "./db/data-source";
 import router from "./routes";
 import "dotenv/config";
 import errorHandler from "./middlewares/errorHandler";
+import User from "./db/entity/User";
 
 const { PORT = 3000 } = process.env;
 
 AppDataSource.initialize();
+
+declare global {
+  namespace Express {
+    export interface Request {
+      user?: User;
+    }
+  }
+}
 
 const app = express();
 

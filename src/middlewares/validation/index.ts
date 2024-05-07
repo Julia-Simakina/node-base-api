@@ -1,18 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 import * as yup from "yup";
-import CustomError from "../../errors/CustomError";
+import CustomError, { ValidationErrorType } from "../../errors/CustomError";
 
-const validateData = (schema: yup.Schema<unknown>) => {
+const validateData = (schema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.validate(req.body, { abortEarly: false });
+      await yup.object().shape(schema).validate(req, { abortEarly: false });
       next();
     } catch (error) {
-      const errors = error.inner.map((err: yup.ValidationError) => ({
-        field: err.path,
-        message: err.message,
-      }));
-      return next(CustomError.BadRequestError(JSON.stringify(errors)));
+      if (error instanceof yup.ValidationError) {
+        const errors = error.inner.map<ValidationErrorType>(
+          (err: yup.ValidationError) => {
+            return {
+              field: err.path,
+              message: err.message,
+            };
+          }
+        );
+
+        return next(CustomError.BadRequestError("Validation error", errors));
+      }
+
+      throw error;
     }
   };
 };
