@@ -35,6 +35,7 @@ export default async function registerUser(
 
     return res.status(201).send(newUser);
   } catch (error) {
-    return console.error(error);
+    console.error(error);
+    throw error;
   }
 }

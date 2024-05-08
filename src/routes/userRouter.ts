@@ -1,13 +1,10 @@
 import { Router } from "express";
 import getAllUsers from "../controllers/user/getAllUsers";
-import updateUserData from "../controllers/user/updateUserData";
+import updateUser from "../controllers/user/updateUser";
 import deleteUser from "../controllers/user/deleteUser";
 import getOneUser from "../controllers/user/getOneUser";
-import {
-  updateUserValidation,
-  getUserValidation,
-  deleteUserValidation,
-} from "../middlewares/validation/userValidation";
+import validateData from "../middlewares/validation";
+import schemas from "../middlewares/validation/userValidation";
 import authMiddleware from "../middlewares/auth";
 
 const userRouter = Router();
@@ -15,8 +12,8 @@ const userRouter = Router();
 userRouter.use(authMiddleware);
 
 userRouter.get("/all", getAllUsers);
-userRouter.get("/:id", getUserValidation, getOneUser);
-userRouter.put("/:id", updateUserValidation, updateUserData);
-userRouter.delete("/:id", deleteUserValidation, deleteUser);
+userRouter.get("/:id", validateData(schemas.getUserSchema), getOneUser);
+userRouter.put("/:id", validateData(schemas.updateUserSchema), updateUser);
+userRouter.delete("/:id", validateData(schemas.deleteUserSchema), deleteUser);
 
 export default userRouter;

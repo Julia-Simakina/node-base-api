@@ -8,12 +8,12 @@ import validateData from "../middlewares/validation";
 const authRouter = Router();
 
 authRouter.post(
-  "/registration",
+  "/signup",
   validateData(schemas.userRegisterSchema),
   registerUser
 );
 
-authRouter.post("/login", validateData(schemas.userLoginSchema), loginUser);
+authRouter.post("/signin", validateData(schemas.userLoginSchema), loginUser);
 
 authRouter.post(
   "/refresh",

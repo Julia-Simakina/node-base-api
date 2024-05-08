@@ -1,5 +1,6 @@
 import * as yup from "yup";
-import validateData from ".";
+
+const dobSchema = yup.date().min(new Date(1900, 0, 1)).max(new Date());
 
 const updateUserSchema = {
   params: yup.object().shape({
@@ -25,8 +26,8 @@ const deleteUserSchema = {
   }),
 };
 
-const deleteUserValidation = validateData(deleteUserSchema);
-const updateUserValidation = validateData(updateUserSchema);
-const getUserValidation = validateData(getUserSchema);
-
-export { updateUserValidation, getUserValidation, deleteUserValidation };
+export default {
+  updateUserSchema,
+  getUserSchema,
+  deleteUserSchema,
+};

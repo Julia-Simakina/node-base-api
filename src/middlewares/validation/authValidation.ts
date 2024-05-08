@@ -16,7 +16,7 @@ const userLoginSchema = {
   }),
 };
 
-const refreshTokenSchema = {
+const refreshTokenSchema: yup.ObjectShape = {
   body: yup.object().shape({
     refreshToken: yup.string().required(),
   }),

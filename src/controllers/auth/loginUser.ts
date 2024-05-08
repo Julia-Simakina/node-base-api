@@ -36,6 +36,7 @@ export default async function loginUser(
 
     return res.status(200).send({ tokens, user });
   } catch (error) {
-    return console.error(error);
+    console.error(error);
+    throw error;
   }
 }

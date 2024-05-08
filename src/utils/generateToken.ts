@@ -1,7 +1,5 @@
 import config from "../config";
-
 import * as jwt from "jsonwebtoken";
-import CustomError from "../errors/CustomError";
 
 const tokenConfig = config.token;
 
@@ -11,13 +9,13 @@ const generateAccessToken = (id: number) => {
   });
 };
 const generateRefreshToken = (id: number) => {
-  return jwt.sign({ id }, config.token.keys.refresh, {
-    expiresIn: config.token.expirationTime.refresh,
+  return jwt.sign({ id }, tokenConfig.keys.refresh, {
+    expiresIn: tokenConfig.expirationTime.refresh,
   });
 };
 const generateTokenPair = (id: number) => {
   if (!id) {
-    throw new Error("");
+    throw new Error("Token generation error");
   }
   return {
     accessToken: generateAccessToken(id),

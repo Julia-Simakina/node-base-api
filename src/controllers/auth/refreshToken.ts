@@ -22,7 +22,8 @@ const refreshToken = (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json(tokens);
   } catch (error) {
-    return console.error(error);
+    console.error(error);
+    throw error;
   }
 };
 

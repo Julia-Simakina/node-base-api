@@ -26,5 +26,6 @@ export default async function deleteUser(
     res.send(`User id ${userId} has been deleted.`);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }

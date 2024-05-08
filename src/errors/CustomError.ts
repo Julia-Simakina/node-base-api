@@ -1,9 +1,6 @@
-interface ICustomError extends Error {}
+import { ValidationErrorType } from "../types/types";
 
-export type ValidationErrorType = {
-  field: string;
-  message: string;
-};
+interface ICustomError extends Error {}
 
 export default class CustomError implements ICustomError {
   status: number;

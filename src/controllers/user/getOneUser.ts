@@ -8,7 +8,7 @@ export default async function getOneUser(
   next: NextFunction
 ) {
   try {
-    const user = await userRepository.findOne({
+    const user = await userRepository.find({
       where: { id: Number(req.params.id) },
     });
 
@@ -19,5 +19,6 @@ export default async function getOneUser(
     return res.json(user);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }

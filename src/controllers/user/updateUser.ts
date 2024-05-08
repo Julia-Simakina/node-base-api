@@ -4,7 +4,7 @@ import hashPassword from "../../utils/hashPassword";
 import CustomError from "../../errors/CustomError";
 import User from "../../db/entity/User";
 
-export default async function updateUserData(
+export default async function updateUser(
   req: Request,
   res: Response,
   next: NextFunction
@@ -44,5 +44,6 @@ export default async function updateUserData(
     res.send(req.user);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }

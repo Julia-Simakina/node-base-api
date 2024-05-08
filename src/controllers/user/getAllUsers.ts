@@ -10,12 +10,9 @@ export default async function getAllUsers(
   try {
     const users = await userRepository.find();
 
-    if (!users) {
-      return next(CustomError.NotFoundError("Users not found"));
-    }
-
     return res.json(users);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
