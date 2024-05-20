@@ -4,6 +4,7 @@ import router from "./routes";
 import "dotenv/config";
 import errorHandler from "./middlewares/errorHandler";
 import User from "./db/entity/User";
+import * as cors from "cors";
 
 const { PORT = 3000 } = process.env;
 
@@ -18,6 +19,8 @@ declare global {
 }
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 

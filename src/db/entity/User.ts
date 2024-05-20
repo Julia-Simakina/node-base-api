@@ -12,8 +12,8 @@ export default class User {
   @PrimaryGeneratedColumn({ type: "integer" })
   id: number;
 
-  @Column({ type: "varchar" })
-  fullName: string;
+  @Column({ type: "varchar", nullable: true })
+  fullName?: string;
 
   @Column({ type: "varchar" })
   email: string;
@@ -21,8 +21,8 @@ export default class User {
   @Column({ type: "varchar", select: false })
   password: string;
 
-  @Column({ type: "timestamp without time zone" })
-  dayOfBirth: Date;
+  @Column({ type: "timestamp without time zone", nullable: true })
+  dayOfBirth?: Date;
 
   @DeleteDateColumn({
     type: "timestamp without time zone",
