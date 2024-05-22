@@ -5,10 +5,11 @@ import "dotenv/config";
 import { JwtPayloadType } from "../../types/types";
 import CustomError from "../../errors/CustomError";
 import userRepository from "../../db/userRepository";
+import User from "../../db/entity/User";
 
 const { ACCESS_KEY } = process.env;
 
-const getMe = async (req: Request, res: Response, next: NextFunction) => {
+const getMe = async (req: Request, res: Response<User>, next: NextFunction) => {
   try {
     const { authorization } = req.headers;
 
@@ -17,7 +18,10 @@ const getMe = async (req: Request, res: Response, next: NextFunction) => {
 
     const userId = Number(decodedToken.id);
 
-    const user = await userRepository.find({
+    // const user = await userRepository.find({
+    //   where: { id: userId },
+    // });
+    const user = await userRepository.findOne({
       where: { id: userId },
     });
 

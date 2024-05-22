@@ -7,7 +7,7 @@ const updateUserSchema = {
     id: yup.number().required(),
   }),
   body: yup.object().shape({
-    fullName: yup.string().min(2),
+    name: yup.string(),
     email: yup.string().email(),
     password: yup.string().min(5),
     dayOfBirth: yup.date().min(new Date(1900, 0, 1)).max(new Date()),

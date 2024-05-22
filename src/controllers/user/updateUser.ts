@@ -25,9 +25,11 @@ export default async function updateUser(
       });
 
       if (userWithReqEmail) {
-        return next(
-          CustomError.ConflictError("A user with this email already exists")
-        );
+        if (userWithReqEmail.email !== newUserData.email) {
+          return next(
+            CustomError.ConflictError("A user with this email already exists")
+          );
+        }
       }
     }
 

@@ -11,7 +11,7 @@ export default async function registerUser(
   next: NextFunction
 ) {
   try {
-    const { fullName, email, password, dayOfBirth }: User = req.body;
+    const { name, email, password, dayOfBirth }: User = req.body;
     const existingUser = await userRepository.findOne({
       where: { email },
     });
@@ -25,7 +25,7 @@ export default async function registerUser(
     const hashedPassword = hashPassword(password);
 
     const user = new User();
-    user.fullName = fullName;
+    user.name = name;
     user.email = email;
     user.password = hashedPassword;
     user.dayOfBirth = dayOfBirth;
