@@ -4,8 +4,9 @@ import User from "../../db/entity/User";
 import userRepository from "../../db/userRepository";
 import hashPassword from "../../utils/hashPassword";
 import CustomError from "../../errors/CustomError";
+import generateTokenPair from "../../utils/generateToken";
 
-export default async function registerUser(
+export default async function signUp(
   req: Request,
   res: Response,
   next: NextFunction
@@ -33,7 +34,9 @@ export default async function registerUser(
     const newUser = await userRepository.save(user);
     delete newUser.password;
 
-    return res.status(201).send(newUser);
+    const tokens = generateTokenPair(user.id);
+
+    return res.status(201).send({ tokens, user: newUser });
   } catch (error) {
     console.error(error);
     throw error;

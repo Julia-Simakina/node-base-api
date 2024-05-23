@@ -5,7 +5,7 @@ import CustomError from "../../errors/CustomError";
 import hashPassword from "../../utils/hashPassword";
 import generateTokenPair from "../../utils/generateToken";
 
-export default async function loginUser(
+export default async function signIn(
   req: Request,
   res: Response,
   next: NextFunction

@@ -18,9 +18,6 @@ const getMe = async (req: Request, res: Response<User>, next: NextFunction) => {
 
     const userId = Number(decodedToken.id);
 
-    // const user = await userRepository.find({
-    //   where: { id: userId },
-    // });
     const user = await userRepository.findOne({
       where: { id: userId },
     });
