@@ -15,11 +15,11 @@ export default async function comparePassword(
     const { password } = req.body;
     const { id } = req.params;
 
-    if (Number(id) !== userId) {
-      return next(
-        CustomError.ForbiddenError("You can only update your profile")
-      );
-    }
+    // if (Number(id) !== userId) {
+    //   return next(
+    //     CustomError.ForbiddenError("You can only update your profile")
+    //   );
+    // }
 
     const user = await userRepository.findOne({
       where: { id: userId },

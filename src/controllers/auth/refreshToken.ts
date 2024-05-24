@@ -5,9 +5,18 @@ import "dotenv/config";
 import CustomError from "../../errors/CustomError";
 import { JwtPayloadType } from "../../types/types";
 
+interface ResponseType extends Response {
+  tokens: ResponseTokensType;
+}
+
+type ResponseTokensType = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 const { REFRESH_KEY } = process.env;
 
-const refreshToken = (req: Request, res: Response, next: NextFunction) => {
+const refreshToken = (req: Request, res: ResponseType, next: NextFunction) => {
   try {
     const decoded = verify(
       req.body.refreshToken,

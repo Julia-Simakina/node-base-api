@@ -6,9 +6,19 @@ import hashPassword from "../../utils/hashPassword";
 import CustomError from "../../errors/CustomError";
 import generateTokenPair from "../../utils/generateToken";
 
+interface ResponseType extends Response {
+  tokens: ResponseTokensType;
+  user: User;
+}
+
+type ResponseTokensType = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export default async function signUp(
   req: Request,
-  res: Response,
+  res: ResponseType,
   next: NextFunction
 ) {
   try {

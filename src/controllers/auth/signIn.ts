@@ -4,10 +4,21 @@ import userRepository from "../../db/userRepository";
 import CustomError from "../../errors/CustomError";
 import hashPassword from "../../utils/hashPassword";
 import generateTokenPair from "../../utils/generateToken";
+import User from "../../db/entity/User";
+
+interface ResponseType {
+  tokens: ResponseTokensType;
+  user: User;
+}
+
+type ResponseTokensType = {
+  accessToken: string;
+  refreshToken: string;
+};
 
 export default async function signIn(
   req: Request,
-  res: Response,
+  res: Response<ResponseType>,
   next: NextFunction
 ) {
   try {
