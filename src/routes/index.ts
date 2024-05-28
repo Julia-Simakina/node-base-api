@@ -10,7 +10,7 @@ router.use("/auth", authRouter);
 router.use("/user", userRouter);
 
 router.use("*", (req, res, next) => {
-  return next(CustomError.NotFoundError("The page was not found"));
+  return next(CustomError.NotFoundError("The page was not found", "path"));
 });
 
 export default router;

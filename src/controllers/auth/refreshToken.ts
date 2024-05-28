@@ -5,10 +5,6 @@ import "dotenv/config";
 import CustomError from "../../errors/CustomError";
 import { JwtPayloadType } from "../../types/types";
 
-interface ResponseType extends Response {
-  tokens: ResponseTokensType;
-}
-
 type ResponseTokensType = {
   accessToken: string;
   refreshToken: string;
@@ -16,7 +12,11 @@ type ResponseTokensType = {
 
 const { REFRESH_KEY } = process.env;
 
-const refreshToken = (req: Request, res: ResponseType, next: NextFunction) => {
+const refreshToken = (
+  req: Request,
+  res: Response<ResponseTokensType>,
+  next: NextFunction
+) => {
   try {
     const decoded = verify(
       req.body.refreshToken,
@@ -24,7 +24,7 @@ const refreshToken = (req: Request, res: ResponseType, next: NextFunction) => {
     ) as JwtPayloadType;
 
     if (!decoded) {
-      return next(CustomError.AuthError("Invalid refresh token"));
+      return next(CustomError.AuthError("Invalid refresh token", ""));
     }
 
     const tokens = generateTokenPair(Number(decoded.id));

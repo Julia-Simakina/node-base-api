@@ -28,14 +28,17 @@ export default async function comparePassword(
 
     if (!user) {
       return next(
-        CustomError.NotFoundError("The user with this email was not found")
+        CustomError.NotFoundError(
+          "The user with this email was not found",
+          "email"
+        )
       );
     }
 
     const hashedPassword = hashPassword(password);
 
     if (user.password !== hashedPassword) {
-      return next(CustomError.AuthError("Invalid password"));
+      return next(CustomError.AuthError("Invalid password", "password"));
     }
 
     // delete user.password;

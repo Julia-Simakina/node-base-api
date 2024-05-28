@@ -6,7 +6,7 @@ import User from "../../db/entity/User";
 
 export default async function updateUser(
   req: Request,
-  res: Response,
+  res: Response<User>,
   next: NextFunction
 ) {
   try {
@@ -30,7 +30,10 @@ export default async function updateUser(
           userWithReqEmail.id !== userId
         ) {
           return next(
-            CustomError.ConflictError("A user with this email already exists")
+            CustomError.ConflictError(
+              "A user with this email already exists",
+              "email"
+            )
           );
         }
       }
@@ -46,7 +49,7 @@ export default async function updateUser(
 
     delete req.user.password;
 
-    res.send(req.user);
+    res.status(200).send(req.user);
   } catch (error) {
     console.error(error);
     throw error;

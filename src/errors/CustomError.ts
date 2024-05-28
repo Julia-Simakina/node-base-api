@@ -7,16 +7,23 @@ export default class CustomError implements ICustomError {
   name: string;
   errors?: ValidationErrorType[];
   message: string;
+  path?: string;
 
-  constructor(status: number, message: string, errors?: ValidationErrorType[]) {
+  constructor(
+    status: number,
+    message: string,
+    errors?: ValidationErrorType[],
+    path?: string
+  ) {
     this.message = message;
     this.status = status;
     this.errors = errors;
+    this.path = path;
 
     this.name = "custom error";
   }
-  static AuthError(message: string): CustomError {
-    return new CustomError(401, message);
+  static AuthError(message: string, path: string): CustomError {
+    return new CustomError(401, message, undefined, path);
   }
 
   static BadRequestError(
@@ -30,11 +37,11 @@ export default class CustomError implements ICustomError {
     return new CustomError(403, message);
   }
 
-  static ConflictError(message: string): CustomError {
-    return new CustomError(409, message);
+  static ConflictError(message: string, path: string): CustomError {
+    return new CustomError(409, message, undefined, path);
   }
 
-  static NotFoundError(message: string): CustomError {
-    return new CustomError(404, message);
+  static NotFoundError(message: string, path: string): CustomError {
+    return new CustomError(404, message, undefined, path);
   }
 }

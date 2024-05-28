@@ -4,7 +4,7 @@ import CustomError from "../../errors/CustomError";
 
 export default async function deleteUser(
   req: Request,
-  res: Response,
+  res: Response<string>,
   next: NextFunction
 ) {
   try {
@@ -18,7 +18,7 @@ export default async function deleteUser(
     }
 
     if (!req.user) {
-      return next(CustomError.NotFoundError("User not found"));
+      return next(CustomError.NotFoundError("User not found", "id"));
     }
 
     await userRepository.softDelete(userId);

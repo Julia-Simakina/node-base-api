@@ -15,9 +15,8 @@ const authMiddleware = async (
 ) => {
   try {
     const { authorization } = req.headers;
-
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      return next(CustomError.AuthError("Unauthorized"));
+      return next(CustomError.AuthError("Unauthorized", ""));
     }
 
     const token = authorization.replace("Bearer ", "");
@@ -28,7 +27,7 @@ const authMiddleware = async (
     });
 
     if (!user) {
-      return next(CustomError.NotFoundError("User not found"));
+      return next(CustomError.NotFoundError("User not found", "id"));
     }
 
     req.user = user;
@@ -36,9 +35,9 @@ const authMiddleware = async (
     return next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return next(CustomError.AuthError("Token expired"));
+      return next(CustomError.AuthError("Token expired", ""));
     }
-    return next(CustomError.AuthError("Unauthorized"));
+    return next(CustomError.AuthError("Unauthorized", "password"));
   }
 };
 

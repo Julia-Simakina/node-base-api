@@ -4,17 +4,7 @@ import userRepository from "../../db/userRepository";
 import CustomError from "../../errors/CustomError";
 import hashPassword from "../../utils/hashPassword";
 import generateTokenPair from "../../utils/generateToken";
-import User from "../../db/entity/User";
-
-interface ResponseType {
-  tokens: ResponseTokensType;
-  user: User;
-}
-
-type ResponseTokensType = {
-  accessToken: string;
-  refreshToken: string;
-};
+import { ResponseType } from "../../types/types";
 
 export default async function signIn(
   req: Request,
@@ -31,14 +21,17 @@ export default async function signIn(
 
     if (!user) {
       return next(
-        CustomError.NotFoundError("The user with this email was not found")
+        CustomError.NotFoundError(
+          "The user with this email was not found",
+          "email"
+        )
       );
     }
 
     const hashedPassword = hashPassword(password);
 
     if (user.password !== hashedPassword) {
-      return next(CustomError.AuthError("Invalid password"));
+      return next(CustomError.AuthError("Invalid password", "password"));
     }
 
     delete user.password;

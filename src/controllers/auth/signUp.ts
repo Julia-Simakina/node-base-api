@@ -5,20 +5,11 @@ import userRepository from "../../db/userRepository";
 import hashPassword from "../../utils/hashPassword";
 import CustomError from "../../errors/CustomError";
 import generateTokenPair from "../../utils/generateToken";
-
-interface ResponseType extends Response {
-  tokens: ResponseTokensType;
-  user: User;
-}
-
-type ResponseTokensType = {
-  accessToken: string;
-  refreshToken: string;
-};
+import { ResponseType } from "../../types/types";
 
 export default async function signUp(
   req: Request,
-  res: ResponseType,
+  res: Response<ResponseType>,
   next: NextFunction
 ) {
   try {
@@ -29,7 +20,10 @@ export default async function signUp(
 
     if (existingUser) {
       return next(
-        CustomError.ConflictError("A user with this email already exists")
+        CustomError.ConflictError(
+          " A user with this email already exists",
+          "email"
+        )
       );
     }
 
