@@ -7,6 +7,8 @@ const errorHandler = (err, req, res, next) => {
       .json({ message: err.message, errors: err.errors, path: err.path });
   }
 
+  console.error("ERROR: ", err);
+
   return res.status(500).json({ message: "Unexpected error" });
 };
 

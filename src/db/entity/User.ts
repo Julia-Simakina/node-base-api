@@ -5,7 +5,17 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  AfterLoad,
 } from "typeorm";
+
+const addPath = (avatar: string, folder: string) => {
+  if (!avatar) {
+    return null;
+  }
+
+  const link = `http://localhost:3000/${folder}/${avatar}`;
+  return link;
+};
 
 @Entity()
 export default class User {
@@ -21,8 +31,8 @@ export default class User {
   @Column({ type: "varchar", select: false })
   password: string;
 
-  // @Column({default: '/public/user/avatar/avatar-1716902855324.png'})
-  // avatar?: string;
+  @Column({ type: "varchar", nullable: true })
+  avatar?: string;
 
   @Column({ type: "timestamp without time zone", nullable: true })
   dayOfBirth?: Date;
@@ -39,4 +49,9 @@ export default class User {
 
   @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt: Date;
+
+  @AfterLoad()
+  updateAvatarPath() {
+    this.avatar = addPath(this.avatar, "public");
+  }
 }

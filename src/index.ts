@@ -26,39 +26,10 @@ const app = express();
 
 app.use(cors());
 
-app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+app.use(express.json({ limit: "100mb" }));
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
+app.use("/public", express.static("public"));
 
-const upload = multer({ storage: storage });
-
-app.post(
-  "/upload-avatar",
-  upload.single("avatar"),
-  (req: any, res: Response) => {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
-    // const uploadedFilePath: string = req.file.path.replace(/\\/g, "/");
-
-    return res.status(200).json({
-      message: "Avatar uploaded successfully",
-      imagePath: req.file.path,
-    });
-  }
-);
 app.use("/api", router);
 
 app.use(errorHandler);
