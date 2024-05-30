@@ -9,17 +9,19 @@ import authMiddleware from "../middlewares/auth";
 import getMe from "../controllers/user/getMe";
 import comparePassword from "../controllers/user/comparePassword";
 import uploadAvatar from "../controllers/user/uploadAvatar";
-import { upload } from "../utils/multer";
 
 const userRouter = Router();
 
 userRouter.use(authMiddleware);
 
-userRouter.post("/upload-avatar", uploadAvatar);
+userRouter.post(
+  "/upload-avatar",
+  validateData(schemas.uploadAvatarSchema),
+  uploadAvatar
+);
 userRouter.get("/getme", getMe);
 userRouter.get("/all", getAllUsers);
 // userRouter.post("/:id/comparePassword", comparePassword);
-
 userRouter.get("/:id", validateData(schemas.getUserSchema), getOneUser);
 userRouter.put("/:id", validateData(schemas.updateUserSchema), updateUser);
 userRouter.delete("/:id", validateData(schemas.deleteUserSchema), deleteUser);

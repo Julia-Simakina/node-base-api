@@ -1,3 +1,4 @@
+import { userInfo } from "os";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,15 +7,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   AfterLoad,
+  AfterInsert,
+  AfterUpdate,
 } from "typeorm";
+
+const { PORT = 3000 } = process.env;
 
 const addPath = (avatar: string, folder: string) => {
   if (!avatar) {
     return null;
   }
 
-  const link = `http://localhost:3000/${folder}/${avatar}`;
-  return link;
+  return `http://localhost:${PORT}/${folder}/${avatar}`;
 };
 
 @Entity()
@@ -31,8 +35,12 @@ export default class User {
   @Column({ type: "varchar", select: false })
   password: string;
 
-  @Column({ type: "varchar", nullable: true })
-  avatar?: string;
+  @Column({
+    type: "varchar",
+    nullable: true,
+    // default: `http://localhost:${PORT}/public/defaultAvatar.png`,
+  })
+  avatar: string;
 
   @Column({ type: "timestamp without time zone", nullable: true })
   dayOfBirth?: Date;
@@ -50,6 +58,7 @@ export default class User {
   @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt: Date;
 
+  @AfterUpdate()
   @AfterLoad()
   updateAvatarPath() {
     this.avatar = addPath(this.avatar, "public");

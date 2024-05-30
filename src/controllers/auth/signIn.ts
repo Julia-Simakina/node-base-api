@@ -16,7 +16,7 @@ export default async function signIn(
 
     const user = await userRepository.findOne({
       where: { email },
-      select: ["password", "id", "email", "name"],
+      select: ["password", "id", "email", "name", "avatar"],
     });
 
     if (!user) {

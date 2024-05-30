@@ -13,7 +13,7 @@ export default async function signUp(
   next: NextFunction
 ) {
   try {
-    const { name, email, password, dayOfBirth }: User = req.body;
+    const { name, email, password, dayOfBirth, avatar }: User = req.body;
     const existingUser = await userRepository.findOne({
       where: { email },
     });
@@ -31,6 +31,7 @@ export default async function signUp(
 
     const user = new User();
     user.name = name;
+    user.avatar = avatar;
     user.email = email;
     user.password = hashedPassword;
     user.dayOfBirth = dayOfBirth;

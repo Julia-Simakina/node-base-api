@@ -14,6 +14,12 @@ const updateUserSchema = {
   }),
 };
 
+const uploadAvatarSchema = {
+  body: yup.object().shape({
+    avatar: yup.string(),
+  }),
+};
+
 const getUserSchema = {
   params: yup.object().shape({
     id: yup.number().required(),
@@ -27,6 +33,7 @@ const deleteUserSchema = {
 };
 
 export default {
+  uploadAvatarSchema,
   updateUserSchema,
   getUserSchema,
   deleteUserSchema,

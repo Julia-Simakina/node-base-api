@@ -22,9 +22,6 @@ const getMe = async (req: Request, res: Response<User>, next: NextFunction) => {
       where: { id: userId },
     });
 
-    // (user as any).avatar =
-    //   "http://localhost:3000/uploads/avatar-1716905518885.png";
-
     return res.status(200).json(user);
   } catch (error) {
     console.error(error);

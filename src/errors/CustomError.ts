@@ -28,7 +28,7 @@ export default class CustomError implements ICustomError {
 
   static BadRequestError(
     message: string,
-    errors: ValidationErrorType[]
+    errors?: ValidationErrorType[]
   ): CustomError {
     return new CustomError(400, message, errors);
   }
