@@ -6,6 +6,7 @@ import User from "../../db/entity/User";
 import CustomError from "../../errors/CustomError";
 
 const validImageExtensions = ["jpeg", "jpg", "png", "gif"];
+const avatarUploadPath = "public/user/";
 
 const uploadAvatar = async (
   req: Request,
@@ -30,9 +31,19 @@ const uploadAvatar = async (
       return next(CustomError.BadRequestError("Unsupported image format."));
     }
 
+    const oldAvatarName = req.user.avatar?.split(`${avatarUploadPath}`)[1];
+
     const avatarName = `${id}-avatar${uuid.v4()}.${extension}`;
 
-    await fs.promises.writeFile(`public/${avatarName}`, bs64payload, "base64");
+    await fs.promises.writeFile(
+      `${avatarUploadPath}${avatarName}`,
+      bs64payload,
+      "base64"
+    );
+
+    if (req.user.avatar && oldAvatarName) {
+      fs.promises.unlink(avatarUploadPath + oldAvatarName);
+    }
 
     req.user.avatar = avatarName;
 

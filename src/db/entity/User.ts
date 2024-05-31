@@ -1,4 +1,3 @@
-import { userInfo } from "os";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -18,7 +17,7 @@ const addPath = (avatar: string, folder: string) => {
     return null;
   }
 
-  return `http://localhost:${PORT}/${folder}/${avatar}`;
+  return `http://localhost:${PORT}/public/${folder}/${avatar}`;
 };
 
 @Entity()
@@ -38,7 +37,6 @@ export default class User {
   @Column({
     type: "varchar",
     nullable: true,
-    // default: `http://localhost:${PORT}/public/defaultAvatar.png`,
   })
   avatar: string;
 
@@ -61,6 +59,6 @@ export default class User {
   @AfterUpdate()
   @AfterLoad()
   updateAvatarPath() {
-    this.avatar = addPath(this.avatar, "public");
+    this.avatar = addPath(this.avatar, "user");
   }
 }
