@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   AfterLoad,
-  AfterInsert,
   AfterUpdate,
 } from "typeorm";
 

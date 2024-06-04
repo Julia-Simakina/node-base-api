@@ -5,10 +5,6 @@ import "dotenv/config";
 import errorHandler from "./middlewares/errorHandler";
 import User from "./db/entity/User";
 import * as cors from "cors";
-import { Request, Response } from "express";
-import * as multer from "multer";
-import * as path from "path";
-import * as fs from "fs";
 
 const { PORT = 3000 } = process.env;
 
