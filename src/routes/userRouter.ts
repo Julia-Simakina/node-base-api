@@ -5,14 +5,12 @@ import deleteUser from "../controllers/user/deleteUser";
 import getOneUser from "../controllers/user/getOneUser";
 import validateData from "../middlewares/validation";
 import schemas from "../middlewares/validation/userValidation";
-import authMiddleware from "../middlewares/auth";
+
 import getMe from "../controllers/user/getMe";
 import comparePassword from "../controllers/user/comparePassword";
 import uploadAvatar from "../controllers/user/uploadAvatar";
 
 const userRouter = Router();
-
-userRouter.use(authMiddleware);
 
 userRouter.post(
   "/upload-avatar",

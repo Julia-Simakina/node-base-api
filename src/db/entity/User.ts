@@ -7,7 +7,9 @@ import {
   UpdateDateColumn,
   AfterLoad,
   AfterUpdate,
+  OneToMany,
 } from "typeorm";
+import Cart from "./Cart";
 
 const { PORT = 3000 } = process.env;
 
@@ -54,6 +56,9 @@ export default class User {
 
   @UpdateDateColumn({ type: "timestamp without time zone" })
   updatedAt: Date;
+
+  @OneToMany(() => Cart, (cart) => cart.user)
+  cart: Cart[];
 
   @AfterUpdate()
   @AfterLoad()
