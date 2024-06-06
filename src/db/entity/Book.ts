@@ -1,4 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  AfterLoad,
+  ManyToMany,
+  JoinTable,
+  DeleteDateColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import Genre from "./Genre";
 
 const { PORT = 3000 } = process.env;
 
@@ -30,8 +41,8 @@ export default class Book {
   @Column({ nullable: false, type: "float" })
   hardCoverPrice: number;
 
-  @Column({ nullable: false, type: "varchar" })
-  dateOfIssue: string;
+  @Column({ nullable: false, type: "timestamp" })
+  dateOfIssue: Date;
 
   @Column({ nullable: true, type: "integer" })
   rating: number;
@@ -42,8 +53,25 @@ export default class Book {
   @Column({ nullable: false, type: "varchar" })
   description: string;
 
-  @Column({ nullable: false, type: "varchar" })
-  genre: string;
+  @DeleteDateColumn({
+    type: "timestamp without time zone",
+    nullable: true,
+    default: null,
+  })
+  deletedAt: Date;
+
+  @CreateDateColumn({ type: "timestamp without time zone" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp without time zone" })
+  updatedAt: Date;
+
+  // @Column({ nullable: false, type: "varchar" })
+  // genre: string;
+
+  @ManyToMany(() => Genre, (genre) => genre.books)
+  @JoinTable()
+  genres: Genre[];
 
   @AfterLoad()
   updateAvatarPath() {

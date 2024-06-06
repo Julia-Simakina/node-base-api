@@ -5,6 +5,7 @@ import "dotenv/config";
 import errorHandler from "./middlewares/errorHandler";
 import User from "./db/entity/User";
 import * as cors from "cors";
+import Genre from "./db/entity/Genre";
 
 const { PORT = 3000 } = process.env;
 

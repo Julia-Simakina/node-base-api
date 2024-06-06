@@ -2,10 +2,13 @@ import "dotenv/config";
 import { Request, Response, NextFunction } from "express";
 import Book from "../../db/entity/Book";
 import bookRepository from "../../db/bookRepository";
+import AppDataSource from "../../db/data-source";
+import genreRepository from "../../db/genreRepository";
+import CustomError from "../../errors/CustomError";
 
 export default async function addBook(
   req: Request,
-  res: Response,
+  res: Response<Book>,
   next: NextFunction
 ) {
   try {
@@ -19,8 +22,10 @@ export default async function addBook(
       rating,
       status,
       description,
-      genre,
-    }: Book = req.body;
+      genresIds,
+    } = req.body;
+
+    console.log("genres >>>>>", genresIds);
 
     const book = new Book();
     book.name = name;
@@ -32,11 +37,31 @@ export default async function addBook(
     book.rating = rating;
     book.status = status;
     book.description = description;
-    book.genre = genre;
+
+    const genre = await genreRepository.findOne({
+      where: {
+        id: genresIds,
+      },
+    });
+
+    if (!genre) {
+      throw CustomError.BadRequestError("wrong genre id");
+    }
+
+    book.genres = [genre];
 
     const newBook = await bookRepository.save(book);
 
-    return res.status(201).send(newBook);
+    const bookWithGenres = await bookRepository.findOne({
+      where: {
+        id: newBook.id,
+      },
+      relations: {
+        genres: true,
+      },
+    });
+
+    return res.status(201).send(bookWithGenres);
   } catch (error) {
     console.error(error);
     throw error;

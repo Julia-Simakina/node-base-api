@@ -5,11 +5,13 @@ import CustomError from "../errors/CustomError";
 import bookRouter from "./bookRouter";
 import cartRouter from "./cartRouter";
 import authMiddleware from "../middlewares/auth";
+import genreRouter from "./genreRouer";
 
 const router = Router();
 
 router.use("/auth", authRouter);
 router.use("/book", bookRouter);
+router.use("/genre", genreRouter);
 
 router.use(authMiddleware);
 
