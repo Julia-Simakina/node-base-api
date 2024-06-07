@@ -7,6 +7,7 @@ import getAllGenre from "../controllers/book/getAllGenre";
 const bookRouter = Router();
 
 bookRouter.get("/all", getAllBooks);
+// bookRouter.post("/all", getAllBooks);
 bookRouter.get("/all-genre", getAllGenre);
 bookRouter.post("/add", addBook);
 bookRouter.get("/:id", getOneBook);

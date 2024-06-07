@@ -8,9 +8,14 @@ export default async function getAllBooks(
   next: NextFunction
 ) {
   try {
-    const books = await bookRepository.find();
+    const startIndex = Number(req.query.startIndex);
+    const endIndex = Number(req.query.endIndex);
 
-    return res.json(books);
+    const [books, booksCount] = await bookRepository.findAndCount();
+
+    const slicedCards = books.slice(startIndex, endIndex);
+
+    return res.json(slicedCards);
   } catch (error) {
     console.error(error);
     throw error;

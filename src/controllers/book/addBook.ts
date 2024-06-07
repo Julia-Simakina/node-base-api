@@ -5,6 +5,7 @@ import bookRepository from "../../db/bookRepository";
 import AppDataSource from "../../db/data-source";
 import genreRepository from "../../db/genreRepository";
 import CustomError from "../../errors/CustomError";
+import { In } from "typeorm";
 
 export default async function addBook(
   req: Request,
@@ -22,7 +23,7 @@ export default async function addBook(
       rating,
       status,
       description,
-      genresIds,
+      genres: genresIds,
     } = req.body;
 
     console.log("genres >>>>>", genresIds);
@@ -38,17 +39,19 @@ export default async function addBook(
     book.status = status;
     book.description = description;
 
-    const genre = await genreRepository.findOne({
-      where: {
-        id: genresIds,
-      },
-    });
+    // const genre = await genreRepository.findOne({
+    //   where: {
+    //     id: genresIds,
+    //   },
+    // });
 
-    if (!genre) {
+    const genres = await genreRepository.find({ where: { id: In(genresIds) } });
+
+    if (!genres) {
       throw CustomError.BadRequestError("wrong genre id");
     }
 
-    book.genres = [genre];
+    book.genres = genres;
 
     const newBook = await bookRepository.save(book);
 
