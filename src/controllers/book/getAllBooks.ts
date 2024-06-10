@@ -4,7 +4,8 @@ import Book from "../../db/entity/Book";
 
 type GetBooksResponseType = {
   slicedCards: Book[];
-  numbers: number[];
+  numberOfPages: number;
+  currentPage: number;
 };
 
 export default async function getAllBooks(
@@ -21,15 +22,16 @@ export default async function getAllBooks(
 
     const [books, booksCount] = await bookRepository.findAndCount();
 
-    let numbers: number[] = [];
+    let numberOfPages = Math.ceil(booksCount / itemsPerPage);
 
-    for (let i = 1; i <= Math.ceil(booksCount / itemsPerPage); i++) {
-      numbers.push(i);
-    }
+    // for (let i = 1; i <= Math.ceil(booksCount / itemsPerPage); i++) {
+    //   numbers.push(i);
+    // }
 
     const slicedCards = books.slice(startIndex, endIndex);
 
-    return res.json({ slicedCards, numbers });
+    console.log(currentPage);
+    return res.json({ slicedCards, numberOfPages, currentPage });
   } catch (error) {
     console.error(error);
     throw error;
