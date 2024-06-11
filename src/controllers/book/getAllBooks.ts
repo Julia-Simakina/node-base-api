@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import bookRepository from "../../db/bookRepository";
 import Book from "../../db/entity/Book";
+import { CANCELLED } from "dns";
 
 type GetBooksResponseType = {
-  slicedCards: Book[];
+  books: Book[];
   numberOfPages: number;
   currentPage: number;
 };
@@ -17,21 +18,19 @@ export default async function getAllBooks(
     const itemsPerPage = Number(req.query.itemsPerPage);
     const currentPage = Number(req.query.currentPage);
 
+    console.log("query from BOOK", req.query);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    // const endIndex = startIndex + itemsPerPage;
 
-    const [books, booksCount] = await bookRepository.findAndCount();
+    const [books, booksCount] = await bookRepository.findAndCount({
+      skip: startIndex,
+      take: itemsPerPage,
+    });
 
-    let numberOfPages = Math.ceil(booksCount / itemsPerPage);
+    const numberOfPages = Math.ceil(booksCount / itemsPerPage);
 
-    // for (let i = 1; i <= Math.ceil(booksCount / itemsPerPage); i++) {
-    //   numbers.push(i);
-    // }
-
-    const slicedCards = books.slice(startIndex, endIndex);
-
-    console.log(currentPage);
-    return res.json({ slicedCards, numberOfPages, currentPage });
+    return res.json({ books, numberOfPages, currentPage });
   } catch (error) {
     console.error(error);
     throw error;
