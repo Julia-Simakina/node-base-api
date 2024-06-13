@@ -12,7 +12,6 @@ export default async function getAllGenre(
   next: NextFunction
 ) {
   try {
-    console.log("query from GENRE", req.query);
     const genres = await genreRepository.find();
 
     if (!genres) {
